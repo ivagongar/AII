@@ -85,6 +85,29 @@ def list_bd():
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
     
+def buscarTitulo(text):
+    
+    conn= sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor=conn.execute("SELECT * FROM FORO WHERE TITULO LIKE '%"+text+"%'")
+    tp=Toplevel(height=200,width=150)
+    sc= Scrollbar(tp)
+    sc.pack(side=RIGHT, fill=Y)
+    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    
+    for row in cursor:
+        lb.insert(END, "Titulo :" + row[1])
+        lb.insert(END, "Autor: "+ row[2])
+        lb.insert(END, "Fecha: "+ row[3])
+        lb.insert(END,'')
+          
+    
+    
+   
+    lb.pack(side=LEFT,fill=BOTH)
+    sc.config(command= lb.yview)
+    
     
 
 def mainMetodo():
@@ -125,14 +148,25 @@ def ventana():
     bottomframe.pack(side=BOTTOM)
     
     mb1=Menubutton(bottomframe, text="Datos", relief=RAISED )
-    mb1.grid()
     mb1.menu =Menu(mb1, tearoff = 0 )
     mb1["menu"]=mb1.menu
 
     mb1.menu.add_command(label="Almacenar",command=mainMetodo)
     mb1.menu.add_command(label="Listar",command=list_bd)
+    mb1.menu.add_command(label="Salir",command=root.destroy)
 
-    mb1.pack()
+    mb1.grid(row=0,column=0)
+    
+    mb1=Menubutton(bottomframe, text="Buscar", relief=RAISED )
+    mb1.menu =Menu(mb1, tearoff = 0 )
+    mb1["menu"]=mb1.menu
+
+    mb1.menu.add_command(label="Almacenar",command=buscarTitulo)
+   
+
+    mb1.grid(row=0,column=1)
+    
+    
     
     root.mainloop()
     
