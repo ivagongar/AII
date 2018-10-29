@@ -124,14 +124,15 @@ def ventana():
     bottomframe= Frame(root)
     bottomframe.pack(side=BOTTOM)
     
-    almacenarBoton= Button(bottomframe,text="Almacenar", fg="black", command=mainMetodo)
-    almacenarBoton.pack(side= LEFT)
-    
-    listarBoton= Button(bottomframe,text="Listar", fg="black", command=list_bd)
-    listarBoton.pack(side= LEFT)
-    
-    quitBoton= Button(bottomframe,text="Salir", fg="black", command=root.destroy)
-    quitBoton.pack(side= LEFT)
+    mb1=Menubutton(bottomframe, text="Datos", relief=RAISED )
+    mb1.grid()
+    mb1.menu =Menu(mb1, tearoff = 0 )
+    mb1["menu"]=mb1.menu
+
+    mb1.menu.add_command(label="Almacenar",command=mainMetodo)
+    mb1.menu.add_command(label="Listar",command=list_bd)
+
+    mb1.pack()
     
     root.mainloop()
     
