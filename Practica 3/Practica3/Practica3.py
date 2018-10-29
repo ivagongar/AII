@@ -12,7 +12,7 @@ from Tools.demo.sortvisu import WIDTH
 
 
 def cargar_web(url):
-    a=0
+    
     response = urllib.request.urlopen(url)
     html_doc = response.read()
     soup = BeautifulSoup(html_doc, 'html.parser')
