@@ -22,11 +22,11 @@ from tkinter import Frame
 from tkinter import Menubutton
 from tkinter import Menu
 
-def ventanaResultados():
-    tp=Toplevel(height=200,width=150)
+def ventanaResultados(tlheight,tlwidth,lbwidth,lbheight):
+    tp=Toplevel(height=tlheight,width=tlwidth)
     sc= Scrollbar(tp)
     sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    lb=Listbox(tp, width=lbwidth, height=lbheight, yscrollcommand=sc.set)
     
     return lb,sc
 

@@ -1,16 +1,13 @@
 from Practica3 import funcionesBD
 
 from tkinter import Toplevel
-from tkinter import Scrollbar
-from tkinter import Listbox
+
 from tkinter import Label
 from tkinter import Entry
 
-from tkinter import RIGHT
 from tkinter import LEFT
 from tkinter import BOTH
 
-from tkinter import Y
 from tkinter import END
 
 from tkinter import FLAT
@@ -25,7 +22,7 @@ from Practica3 import funcionesTkinter
 def list_bd():
     cursor=funcionesBD.selectAll()
     
-    ventana = funcionesTkinter.ventanaResultados()
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
     sc = ventana[1]
     
@@ -41,10 +38,9 @@ def list_bd():
 def popularesBD():
     cursor= funcionesBD.selectPopulares()
     
-    tp=Toplevel(height=200,width=150)
-    sc= Scrollbar(tp)
-    sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
+    lb = ventana[0]
+    sc = ventana[1]
     
     for row in cursor:
         lb.insert(END, "Titulo :" + row[1])
@@ -61,10 +57,9 @@ def popularesBD():
 def activosBD():
     cursor= funcionesBD.selectActivos()
     
-    tp=Toplevel(height=200,width=150)
-    sc= Scrollbar(tp)
-    sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
+    lb = ventana[0]
+    sc = ventana[1]
     
     for row in cursor:
         lb.insert(END, "Titulo :" + row[1])
@@ -95,10 +90,9 @@ def buscar_BD_Titulo():
 def encontrarTitulo(text):
     cursor= funcionesBD.findTitulo(text)
     
-    tp=Toplevel(height=200,width=150)
-    sc= Scrollbar(tp)
-    sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
+    lb = ventana[0]
+    sc = ventana[1]
     
     for row in cursor:
         lb.insert(END, "Titulo :" + row[1])
@@ -127,10 +121,9 @@ def encontrarAutor(text):
     cursor= funcionesBD.findAutor(text)
     
     
-    tp=Toplevel(height=200,width=150)
-    sc= Scrollbar(tp)
-    sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
+    lb = ventana[0]
+    sc = ventana[1]
     
     for row in cursor:
         lb.insert(END, "Titulo :" + row[1])
@@ -187,10 +180,9 @@ def encontrarFecha(text):
     cursor=funcionesBD.findFecha(text)
     
     
-    tp=Toplevel(height=200,width=150)
-    sc= Scrollbar(tp)
-    sc.pack(side=RIGHT, fill=Y)
-    lb=Listbox(tp, width=200, height=150, yscrollcommand=sc.set)
+    ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
+    lb = ventana[0]
+    sc = ventana[1]
     
     for row in cursor:
         lb.insert(END, "Titulo :" + row[1])
