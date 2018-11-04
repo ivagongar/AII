@@ -64,8 +64,8 @@ def ventanaPrincipal():
     mb1.menu =Menu(mb1, tearoff = 0 )
     mb1["menu"]=mb1.menu
 
-    mb1.menu.add_command(label="Temas más populares",command=fp.popularesBD)
-    mb1.menu.add_command(label="Temas más activos",command=fp.activosBD)
+    mb1.menu.add_command(label="Temas mas populares",command=fp.popularesBD)
+    mb1.menu.add_command(label="Temas mas activos",command=fp.activosBD)
    
 
     mb1.grid(row=0,column=2)

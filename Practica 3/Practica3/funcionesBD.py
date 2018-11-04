@@ -22,9 +22,11 @@ def getNumRows():
        
     cursor=conn.execute("SELECT COUNT(*) FROM FORO")
     
+    numRows = str(cursor.fetchone()[0])
+    
     conn.close()
     
-    return cursor
+    return numRows
         
     
 def insertRow(titulo,autor, fecha,enlace,respuestas,visitas):

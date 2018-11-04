@@ -52,6 +52,6 @@ def almacenarBD():
             fbd.insertRow(titulo, autor, fecha, enlace, respuestas.replace(',',''), visitas.replace(',',''))
      
        
-    cursor= fbd.getNumRows()
-    messagebox.showinfo("Base de datos", "La base de datos ha sido creada perfectamente. \n Contiene "+str(cursor.fetchone()[0]) + " registros.")
+    numRows= fbd.getNumRows()
+    messagebox.showinfo("Base de datos", "La base de datos ha sido creada perfectamente. \n Contiene "+ numRows + " registros.")
 

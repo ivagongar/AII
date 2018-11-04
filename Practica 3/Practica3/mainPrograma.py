@@ -1,5 +1,5 @@
 
-from Practica3.funcionesTkinter import ventanaPrincipal
+from Practica3 import funcionesTkinter
 
-ventanaPrincipal()
+funcionesTkinter.ventanaPrincipal()
 

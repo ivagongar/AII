@@ -20,7 +20,10 @@ from Practica3 import funcionesTkinter
 
 
 def list_bd():
-    cursor=funcionesBD.selectAll()
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor = conn.execute("""SELECT * FROM FORO """)
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
@@ -31,12 +34,18 @@ def list_bd():
         lb.insert(END, "Autor: "+ row[2])
         lb.insert(END, "Fecha: "+ row[3])
         lb.insert(END,'')
-   
+    
+    conn.close()
+       
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
     
 def popularesBD():
-    cursor= funcionesBD.selectPopulares()
+    
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor=conn.execute("""SELECT * FROM FORO ORDER BY VISITAS DESC LIMIT 5""") 
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
@@ -49,13 +58,19 @@ def popularesBD():
         lb.insert(END, "Respuestas: "+ str(row[5]))
         lb.insert(END, "Visitas: "+ str(row[6]))
         lb.insert(END,'')
+        
+    
+    conn.close()
    
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
     
     
 def activosBD():
-    cursor= funcionesBD.selectActivos()
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor=conn.execute("""SELECT * FROM FORO ORDER BY RESPUESTAS DESC LIMIT 10 """)
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
@@ -68,6 +83,8 @@ def activosBD():
         lb.insert(END, "Respuestas: "+ str(row[5]))
         lb.insert(END, "Visitas: "+ str(row[6]))
         lb.insert(END,'')
+   
+    conn.close()
    
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
@@ -88,7 +105,11 @@ def buscar_BD_Titulo():
        
     
 def encontrarTitulo(text):
-    cursor= funcionesBD.findTitulo(text)
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor=conn.execute("SELECT * FROM FORO WHERE TITULO LIKE '%"+text+"%'")
+    
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
@@ -99,6 +120,8 @@ def encontrarTitulo(text):
         lb.insert(END, "Autor: "+ row[2])
         lb.insert(END, "Fecha: "+ row[3])
         lb.insert(END,'')
+     
+    conn.close()
               
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
@@ -111,14 +134,17 @@ def buscar_BD_Autor():
         v.destroy()
         
     v= Toplevel()
-    lb=Label(v,text="Introduzca el tema")
+    lb=Label(v,text="Introduzca el autor")
     lb.pack(side=LEFT)
     en= Entry(v)
     en.bind("<Return>",buscarAutor)
     en.pack()  
     
 def encontrarAutor(text):
-    cursor= funcionesBD.findAutor(text)
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
+    
+    cursor=conn.execute("SELECT * FROM FORO WHERE AUTOR LIKE '%"+text+"%'") 
     
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
@@ -130,6 +156,8 @@ def encontrarAutor(text):
         lb.insert(END, "Autor: "+ row[2])
         lb.insert(END, "Fecha: "+ row[3])
         lb.insert(END,'')    
+    
+    conn.close()
     
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)
@@ -149,7 +177,7 @@ def buscar_BD_Fecha(error=False):
             encontrarFecha(diaS+"/"+mesS+"/"+anhoS)    
         
     v= Toplevel()
-    lb=Label(v,text="Introduzca el día (dd)")
+    lb=Label(v,text="Introduzca el dia (dd)")
     lb.grid(row=0,column=0)
     dia= Entry(v, width=2)
     dia.bind("<Return>",buscarFecha)
@@ -161,7 +189,7 @@ def buscar_BD_Fecha(error=False):
     mes.bind("<Return>",buscarFecha)
     mes.grid(row=1,column=1)
     
-    lb=Label(v,text="Introduzca el año (yyyy)")
+    lb=Label(v,text="Introduzca el anyo (yyyy)")
     lb.grid(row=2,column=0)
     anho= Entry(v,width=4)
     anho.bind("<Return>",buscarFecha)
@@ -177,8 +205,10 @@ def buscar_BD_Fecha(error=False):
     
 def encontrarFecha(text):
 
-    cursor=funcionesBD.findFecha(text)
+    conn= funcionesBD.sqlite3.connect("foro.db")
+    conn.text_factory= str
     
+    cursor=conn.execute("SELECT * FROM FORO WHERE FECHA LIKE '%"+text+"%' ")  
     
     ventana = funcionesTkinter.ventanaResultados(200,150,200,150)
     lb = ventana[0]
@@ -189,6 +219,8 @@ def encontrarFecha(text):
         lb.insert(END, "Autor: "+ row[2])
         lb.insert(END, "Fecha: "+ row[3])
         lb.insert(END,'')
+     
+    conn.close()
              
     lb.pack(side=LEFT,fill=BOTH)
     sc.config(command= lb.yview)    
