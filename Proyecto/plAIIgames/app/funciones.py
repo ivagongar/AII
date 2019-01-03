@@ -1,53 +1,127 @@
-import urllib.request
-import requests
+# -*- coding: utf-8 -*-
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import time
+import datetime
+import re
+from .models import Game, Genre
 
-def cargar_web(url): 
+def cargarSwitch(url): 
     driver = webdriver.Chrome()
     driver.get(url)
-    soup = BeautifulSoup(driver.page_source, 'html5lib')
+    time.sleep(1)
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
         
     return soup
 
-def cargarWeb2(url):
-    response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36'})
-    soup = BeautifulSoup(response.content, "lxml")
-    
-    return soup
 
 def extraerTitulo(soup):
     return str(soup.span.string)
 
-def extraerAutor(soup):
-    return soup.div.span.a.string
+def extraerGeneros(soup):
+    generos = []
+    bruto = str(soup.find("span", class_="hidden-xs hidden-sm").span.find_all("span", recursive=False))
+    res = bruto.replace("<span>", "").replace("</span>", "").replace("[", "").replace("]", "").replace("<!-- -->", "").split(",")
+    for r in res:
+        if r.strip():
+            generos.append(r)
+    
+    return generos
 
-def extraerFecha(soup):
-    text= soup.div.span.a['title'].split(',')[1].strip()
-    return text[2:len(text)].strip()
+def extraerDescripcion(soup):
+    return str(soup.find("p",class_="hidden-xs visible-sm visible-md visible-lg").string)
 
-def extraerEnlace(soup):
-    return soup.div.div.h3.a['href']
 
-def extraerRespuestas(soup):
-    return soup.ul.li.a.string
+#data-price-box-price="enddate"
 
-def extraerVisitas(soup):
-    text= soup.ul.li.next_sibling.next_sibling.string.split(':')[1]
-    return text.strip()
+def extraerPrecios(soup):
+    res = [None,None] #[Original, descuento]
+    pre = soup.find("p", class_="page-data-purchase")
+    if pre is None:#No hay precio
+        return res
+    else:
+        sec = pre.find("span",class_="original-price")
+        #[0:len(precioString)-2]
+        if sec is None:#Hay un precio único
+            precioString = str(pre.span.string)
+            precio = float(precioString.replace(",", ".").replace("€*", "").strip())
+            res[0] = precio
+        else:#Hay dos precios
+            res[0] = float(str(sec.string).replace(",", ".").replace("€", "").strip())
+            desc = pre.find("span",class_="discount")
+            res[1] = float(str(desc.string).replace(",", ".").replace("€*", "").strip())
+        
+        return res
+    
+def extraerFinOferta(soup):
+    link = "https://www.nintendo.es" + str(soup.div.div.a['href'])
+    
+    soup2 = cargarSwitch(link)
+    raw = str(soup2.find("div", class_="row price-box-item discount").p.next_sibling.next_sibling.next_sibling.next_sibling.string)
+    fechaString = raw[len(raw)-10:len(raw)].split("-")
+    year = fechaString[2]
+    month = fechaString[1]
+    day = fechaString[0]
+    
+    return datetime.datetime(int(year),int(month),int(day),23,59)
+    
+    
+    #return link
+
+def extraerLanzamiento(soup):
+    raw = soup.find("p",class_="page-data").text
+    sec = raw.replace("Nintendo Switch","").replace(u'\u2022',"").strip().split(" ")[0]
+    
+    pattern = re.compile("^\d+-\d+-\d+$")
+    if not pattern.match(sec):
+        res = None
+    else:
+        fechaString = sec.split("-")
+        year = fechaString[2]
+        month = fechaString[1]
+        day = fechaString[0]
+        
+        res = datetime.datetime(int(year),int(month),int(day),0,0)
+    
+    return res
+
+
 
 #Contemplar numero de paginas variable
-def almacenarSwitch():
+def almacenarSwitch(numPages = 4):
     #fbd.crearBD()
     
-    for p in range(1,5):#Cambiar luego a 64
-        soup=cargarWeb2("https://www.nintendo.es/Buscar/Buscar-299117.html?f=147394-5-81&p="+str(p))
+    for p in range(1,numPages+1):#Cambiar luego a 64
+        soup=cargarSwitch("https://www.nintendo.es/Buscar/Buscar-299117.html?f=147394-5-81&p="+str(p))
         
         
-        #array= soup.find_all("ul",class_="results")
-        array = soup.find_all("ul", class_="results")
-        print(array[0])
+        
+        pagina = soup.find_all("li", class_="searchresult_row page-list-group-item col-xs-12")
+        
+        for juego in pagina[2:len(pagina)]:
+            generos = extraerGeneros(juego)
+            titulo = extraerTitulo(juego)
+            desc = extraerDescripcion(juego)
+            precios = extraerPrecios(soup)
+            finOferta = None
+            if precios[1] is not None:
+                try:
+                    finOferta = extraerFinOferta(juego)
+                except:
+                    finOferta = None
+            
+            lanz = extraerLanzamiento(soup)
+            
+            generosBien = []
+            for gen in generos:
+                g = Genre.objects.get_or_create(name=gen)[0]
+                g2 = g.save()
+                generosBien.append(g2)
+            
+            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
+            game.save()
+            
+  
         
         #for i in array:
             #titulo= extraerTitulo(i)
@@ -63,4 +137,4 @@ def almacenarSwitch():
     #numRows= fbd.getNumRows()
     #messagebox.showinfo("Base de datos", "La base de datos ha sido creada perfectamente. \n Contiene "+ numRows + " registros.")
 
-almacenarSwitch()
+
