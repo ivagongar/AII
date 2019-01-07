@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
 from bs4 import BeautifulSoup
 import time
 import datetime
 import re
-from .models import Game, Genre
+from app.models import Game, Genre
 
 def cargarSwitch(url): 
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get(url)
     time.sleep(1)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -37,6 +39,7 @@ def extraerDescripcion(soup):
 def extraerPrecios(soup):
     res = [None,None] #[Original, descuento]
     pre = soup.find("p", class_="page-data-purchase")
+
     if pre is None:#No hay precio
         return res
     else:
@@ -88,7 +91,7 @@ def extraerLanzamiento(soup):
 
 
 #Contemplar numero de paginas variable
-def almacenarSwitch(numPages = 4):
+def almacenarSwitch(numPages = 3):
     #fbd.crearBD()
     
     for p in range(1,numPages+1):#Cambiar luego a 64
@@ -99,10 +102,11 @@ def almacenarSwitch(numPages = 4):
         pagina = soup.find_all("li", class_="searchresult_row page-list-group-item col-xs-12")
         
         for juego in pagina[2:len(pagina)]:
+            
             generos = extraerGeneros(juego)
             titulo = extraerTitulo(juego)
             desc = extraerDescripcion(juego)
-            precios = extraerPrecios(soup)
+            precios = extraerPrecios(juego)
             finOferta = None
             if precios[1] is not None:
                 try:
@@ -112,14 +116,16 @@ def almacenarSwitch(numPages = 4):
             
             lanz = extraerLanzamiento(soup)
             
-            generosBien = []
+            
+             
+            #game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
+            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
+            game.save()
+            
             for gen in generos:
                 g = Genre.objects.get_or_create(name=gen)[0]
-                g2 = g.save()
-                generosBien.append(g2)
-            
-            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
-            game.save()
+                g.save()
+                game.genres.add(g)
             
   
         
