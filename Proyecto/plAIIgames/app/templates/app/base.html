@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <title>{{title}}</title>
+</head>
+<body>
+
+<header>
+     {% csrf_token %}
+    {% if request.user.is_authenticated %}
+    <h3> Welcome to PLAILGAMES {{request.user}}</h3>
+
+    <form action="/logOut">
+        <input type="submit" value="Log Out"/>
+    </form>
+
+    {% else %}
+    <form action="/logIn" method="POST" style="float:left">
+        {% csrf_token %}
+        <label for="username">Username: </label><input type="text" id="username" name="username"/>
+        <label for="password">Password: </label><input type="password" id="password" name="password"/>
+        <input type="submit" value="Log In"/>
+
+    </form>
+    <a href="/signUp" style="margin:15px"><button>Sign Up</button></a>
+    {% if loginerror%}
+    <b><p style="color:red">{{loginerror}}</p></b>
+    {% endif %}
+
+    {% endif %}
+
+    <main role="main" class="container">
+        {% block content %}
+        {% endblock %}
+
+
+        {% block extrabody %}{% endblock %}
+    </main>
+
+
+</header>
+</body>

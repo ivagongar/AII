@@ -1,19 +1,41 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from app.models import Genre, Game
 from app import funciones
+from django.contrib.auth.models import User
 
 
 # Create your views here.
 
 def index(request):
-    try:
-        auth = request.user.username
-    except:
-        auth = None
 
-    return render(request, 'app/index.html', {"username": auth})
+    return render(request, 'app/index.html')
+
+def logOut(request):
+    try:
+        logout(request)
+    except:
+        pass
+
+    return render(request, 'app/index.html')
+
+def logIn(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        raw_password =request.POST['password']
+        amove=User.objects.get(username=username)
+
+        user = authenticate(username=username, password=raw_password)
+        if not user:
+            return render(request, 'app/index.html', {'loginerror': 'error al logear'})
+
+        login(request, user)
+        return redirect('index')
+    else:
+        return render(request, 'app/index.html')
+
 
 
 def populateSwitch(request):
@@ -36,6 +58,7 @@ def signUp(request):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
+            user.save()
             login(request, user)
             return redirect('index')
     else:

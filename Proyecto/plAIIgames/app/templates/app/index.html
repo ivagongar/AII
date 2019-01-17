@@ -1,35 +1,14 @@
+{% extends 'app/base.html' %}
 
-
-<!DOCTYPE html>
-<html>
-<head>
-<title>app</title>
-<meta name = "viewport" content = "width = device-width, initial-scale = 1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-</head>
-
+{% block content %}
 <body>
-<h1>Indice</h1>
-
-{% if username %}
-<h3> Welcome to PLAILGAMES {{username}}</h3>
-{% endif %}
-
-
-<br>
 <form action="/populateSwitch">
-    <input type="submit" value="Populate Switch" />
+    <input type="submit" value="Populate Switch"/>
 </form>
 
 <form action="/listAll">
-    <input type="submit" value="All Games" />
+    <input type="submit" value="All Games"/>
 </form>
 
-<a href="/signUp"><button type="signUp" value="signUp">Sign Up</button></a>
-
-<br>
-
-
-
 </body>
-</html>
+{% endblock %}
