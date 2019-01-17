@@ -1,0 +1,33 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>app</title>
+<meta name = "viewport" content = "width = device-width, initial-scale = 1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+<h1>All games</h1>
+
+
+
+<br>
+{% for juego in games %}
+  	<span>{{juego.title}} para {{juego.type}}</span>
+  	{% if juego.cost %}
+  		<span>a {{juego.cost}} euros</span>
+  	{% endif %}
+  	<br>
+{% endfor %}
+
+
+<br>
+<form action="/app">
+    <input type="submit" value="Index" />
+</form>
+
+
+</body>
+</html>
