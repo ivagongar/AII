@@ -11,16 +11,21 @@
 <body>
 <h1>Indice</h1>
 
+{% if username %}
+<h3> Welcome to PLAILGAMES {{username}}</h3>
+{% endif %}
 
 
 <br>
-<form action="/app/populateSwitch">
+<form action="/populateSwitch">
     <input type="submit" value="Populate Switch" />
 </form>
 
-<form action="/app/listAll">
+<form action="/listAll">
     <input type="submit" value="All Games" />
 </form>
+
+<a href="/signUp"><button type="signUp" value="signUp">Sign Up</button></a>
 
 <br>
 
