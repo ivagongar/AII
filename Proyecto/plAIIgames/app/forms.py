@@ -3,7 +3,6 @@ from app.models import Library, Game
 
 
 class LibraryForm(forms.ModelForm):
-
     class Meta:
         model = Library
 
@@ -18,3 +17,5 @@ class LibraryForm(forms.ModelForm):
             'description': forms.Textarea(),
             'user': forms.HiddenInput()
         }
+
+

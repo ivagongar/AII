@@ -78,8 +78,10 @@ def editLibrary(request):
 
     return render(request, 'app/editLibrary.html', {'form': form})
 
+
 def listLibrary(request):
     return render(request, 'app/listLibrary.html')
+
 
 def deleteLibrary(request):
     Library.objects.get(id=request.GET['library']).delete()
@@ -87,3 +89,50 @@ def deleteLibrary(request):
     return redirect('listLibrary')
 
 
+def addGame(request):
+    if request.method == 'POST':
+        num = request.POST['libreria']
+        libreria = Library.objects.get(id=int(num))
+
+        for g in request.POST['games']:
+            game = Game.objects.get(id=g)
+            libreria.games.add(game)
+        libreria.save()
+
+    else:
+        libreria = Library.objects.get(id=request.GET['library'])
+
+        juegos = Game.objects.all()
+        games = list()
+        for j in juegos:
+            games.append(j)
+        for g in libreria.games.all():
+            games.remove(g)
+
+        return render(request, 'app/addGame.html', {'libreria': libreria, 'games': games})
+
+    return redirect('listLibrary')
+
+
+def removeGame(request):
+    if request.method == 'POST':
+        num = request.POST['libreria']
+        libreria = Library.objects.get(id=int(num))
+
+        for g in request.POST['games']:
+            game = Game.objects.get(id=g)
+            libreria.games.remove(game)
+        libreria.save()
+
+    else:
+        libreria = Library.objects.get(id=request.GET['library'])
+
+        games = libreria.games.all()
+
+        return render(request, 'app/removeGame.html', {'libreria': libreria, 'games': games})
+
+    return redirect('listLibrary')
+
+
+def viewLibrary(request):
+    return render(request, 'app/viewLibrary.html', {'library': Library.objects.get(id=request.GET['library'])})
