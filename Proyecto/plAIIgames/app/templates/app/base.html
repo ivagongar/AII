@@ -9,11 +9,16 @@
 <header>
      {% csrf_token %}
     {% if request.user.is_authenticated %}
-    <h3> Welcome to PLAILGAMES {{request.user}}</h3>
+    <div>
+    <h3 style="float:left; margin:0px; margin-right:5px"> Welcome to PLAILGAMES {{request.user}}</h3>
+    <a href="/editLibrary" style=" float:left; margin-right:5px"><button>Create Library</button></a>
+    <a href="/listLibrary" style=" float:left; margin-right:5px"><button>List my Libraries</button></a>
+
 
     <form action="/logOut">
         <input type="submit" value="Log Out"/>
     </form>
+        </div>
 
     {% else %}
     <form action="/logIn" method="POST" style="float:left">
@@ -30,6 +35,11 @@
 
     {% endif %}
 
+
+
+</header>
+<br>
+<br>
     <main role="main" class="container">
         {% block content %}
         {% endblock %}
@@ -38,6 +48,6 @@
         {% block extrabody %}{% endblock %}
     </main>
 
-
-</header>
+<br>
+<br>
 </body>
