@@ -1,0 +1,23 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<body>
+<h1>{{library.title}}</h1>
+<p>{{library.description}}</p>
+
+<fieldset>
+<legend style="margin:0px;"><h2 style="margin:0px;">Juegos</h2></legend>
+<ul>
+    {% for g in library.games.all %}
+
+     <li>{{g.title}}</li>
+    {% endfor %}
+</ul>
+</fieldset>
+<br>
+
+    <a href="/addGame?library={{library.id}}" style=" float:left; margin-right:5px"><button>Add Games</button></a>
+    <a href="/removeGame?library={{library.id}}" style="margin-right:5px"><button>Remove Games</button></a>
+
+</body>
+{% endblock %}

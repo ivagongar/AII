@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% load bootstrap3 %}
+	
+	
+	{% bootstrap_css %}
+	{% bootstrap_javascript %}
+	
+	
+	{% bootstrap_messages %}
+    <title>{{title}}</title>
+</head>
+<body>
+
+<header>
+
+	
+
+     {% csrf_token %}
+    {% if request.user.is_authenticated %}
+    <div>
+    <h3 style="float:left; margin:0px; margin-right:5px"> Welcome to plAIIL GAMES {{request.user}}</h3>
+    <a href="/editLibrary" style=" float:left; margin-right:5px"><button>Create Library</button></a>
+    <a href="/listLibrary" style=" float:left; margin-right:5px"><button>List my Libraries</button></a>
+
+
+    <form action="/logOut">
+        <input type="submit" value="Log Out"/>
+    </form>
+        </div>
+
+    {% else %}
+    <form action="/logIn" method="POST" style="float:left">
+        {% csrf_token %}
+        <label for="username">Username: </label><input type="text" id="username" name="username"/>
+        <label for="password">Password: </label><input type="password" id="password" name="password"/>
+        <input type="submit" value="Log In"/>
+
+    </form>
+    <a href="/signUp" style="margin:15px"><button>Sign Up</button></a>
+    {% if loginerror%}
+    <b><p style="color:red">{{loginerror}}</p></b>
+    {% endif %}
+
+    {% endif %}
+
+
+
+</header>
+<br>
+<br>
+    <main role="main" class="container">
+        {% block content %}
+        {% endblock %}
+
+
+        {% block extrabody %}{% endblock %}
+    </main>
+
+<br>
+<br>
+</body>

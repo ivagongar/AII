@@ -1,0 +1,28 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<body>
+<h1>All games</h1>
+
+<br>
+{% for juego in games %}
+	<fieldset>
+  	<span>{{juego.title}} para {{juego.type}}</span>
+  	{% if juego.cost %}
+  		<span>a {{juego.cost}} euros</span>
+  	{% endif %}
+  	</fieldset>
+  	<br>
+  	
+  	
+{% endfor %}
+
+
+<br>
+<form action="/">
+    <input type="submit" value="Index" />
+</form>
+
+
+</body>
+{% endblock %}

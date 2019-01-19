@@ -1,0 +1,26 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<body>
+
+{% if request.user.library.all %}
+<ul>
+    {% for lib in request.user.library.all  %}
+
+
+    <li>Librería: {{lib.title}}</li>
+    <li>Descripción: {{lib.description}}</li>
+    <a href="/viewLibrary?library={{lib.id}}" style=" float:left; margin-right:5px"><button>View Library</button></a>
+    <a href="/deleteLibrary?library={{lib.id}}" style=" color:red; margin-right:5px"><button style="color:red">Remove Library</button></a>
+
+    <br>
+    <br>
+
+
+    {% endfor %}
+</ul>
+{% else %}
+No tienes librerías
+{% endif %}
+</body>
+{% endblock %}

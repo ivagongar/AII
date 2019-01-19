@@ -1,0 +1,22 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<body>
+<div>
+    <br>
+    <br>
+<form action="/populateSwitch">
+    <input type="submit" value="Populate Switch"/>
+</form>
+
+<form action="/populatePSN">
+    <input type="submit" value="Populate PSN"/>
+</form>
+
+<form action="/listAll">
+    <input type="submit" value="All Games"/>
+</form>
+    </div>
+
+</body>
+{% endblock %}

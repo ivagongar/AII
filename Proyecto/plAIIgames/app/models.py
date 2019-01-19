@@ -34,13 +34,13 @@ class Game(models.Model):
     title = models.TextField(unique=True)
     description = models.TextField()
     type = models.TextField()
-    rating = models.IntegerField()
-    cost = models.FloatField()
-    on_sale_cost = models.FloatField()
-    plus_cost = models.FloatField()
-    start_date_on_sale = models.DateTimeField()
-    end_date_on_sale = models.DateTimeField()
-    release_date = models.DateTimeField()
+    rating = models.IntegerField(blank=True, null=True)
+    cost = models.FloatField(blank=True, null=True)
+    on_sale_cost = models.FloatField(blank=True, null=True)
+    plus_cost = models.FloatField(blank=True, null=True)
+    start_date_on_sale = models.DateTimeField(null=True)
+    end_date_on_sale = models.DateTimeField(null=True)
+    release_date = models.DateTimeField(null=True)
 
     genres = models.ManyToManyField(Genre, related_name='games')
     offer_categories = models.ManyToManyField(OfferCategory, related_name='games')
@@ -53,6 +53,7 @@ class Library(models.Model):
     """
       Librerías para guardar tus juegos
     """
+    id = models.AutoField(primary_key=True)
     title = models.TextField()
     description = models.TextField()
 
