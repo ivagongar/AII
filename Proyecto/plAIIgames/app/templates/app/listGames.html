@@ -2,19 +2,23 @@
 
 {% block content %}
 <body>
-<h1>PSN games</h1>
+<h1>All games</h1>
 
 <br>
 {% for juego in games %}
 	<fieldset>
-  	<span>{{juego.title}}</span>
+  	<span>{{juego.title}} para {{juego.type}}</span>
   	{% if juego.cost %}
-  		<span>a {{juego.cost}} euros</span>
+  		<span>a {{juego.cost}} euros </span>
   	{% endif %}
+  	<ul>Generos:
+  		{% for g in juego.genre %}
+  			<li>{{g}}</li>
+  		{% endfor %}
+  	</ul>
+	
   	</fieldset>
-  	<br>
-  	
-  	
+  	<br>	
 {% endfor %}
 
 

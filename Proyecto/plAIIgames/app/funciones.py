@@ -142,18 +142,22 @@ def almacenarSwitch(numPages = 3):
             #game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
             game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
             game.save()
-            
+            genres = []
             for gen in generos:
                 g = Genre.objects.get_or_create(name=gen)[0]
                 g.save()
                 game.genres.add(g)
+                 
+            game.genres.add(genres)
 
+            
     
+                    
 def extraerHref(soup):
     return soup.a['href']
 
 def extraerOfferCat(soup):
-    return soup.a['href'].div.span.string
+    return soup.a.span.string
 
 def extraerTitle(soup):
     return soup.h2.string
@@ -176,6 +180,12 @@ def extraerOldSaleCost(soup):
     if soup.find("div","sku-info").div.find("div","price") is not None:
         oldCost = soup.find("div","sku-info").div.find("div","price").string.replace("€","").replace(",",".").strip()
     return oldCost
+
+def extraerType(soup):
+    tipo = "Unkwown"
+    if soup.find("div","sku-info").find("div","playable-on__button-set"):
+        tipo = soup.find("div","sku-info").find("div","playable-on__button-set").a.string
+    return tipo
        
 def extraerPlusCost(soup): 
     if soup.div.find("div", "price-display__price--is-plus-upsell") is not None:
@@ -213,9 +223,10 @@ def extraerReleaseDate(soup):
 
 def extraerGenre(soup):  
     result = []
-    genres = soup.find("div","tech-specs").find("div","tech-specs__pivot-menus").ul.find_all("li")
-    for gen in genres:
-        result.append(gen.string)
+    if soup.find("div","tech-specs").find("div","tech-specs__pivot-menus").ul is not None:  
+        genres = soup.find("div","tech-specs").find("div","tech-specs__pivot-menus").ul.find_all("li")
+        for gen in genres:
+            result.append(gen.string)
     return result
     
       
@@ -224,7 +235,7 @@ def almacenarPSN(pag):
     count = 0
     for p in range(1,pag):       
         soup = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-FULLGAMES/"+str(p)+"?gameContentType=games")    
-        array = soup.find_all("div", class_="grid-cell-row__container")
+        array = soup.find_all("div", class_="grid-cell grid-cell--game")
         for i in array:
             href = extraerHref(i)
             print(href)
@@ -249,10 +260,11 @@ def almacenarPSN(pag):
             oldCost = extraerOldSaleCost(j)
             costPlus = extraerPlusCost(j)
             generos = extraerGenre(j)            
-        
+            tipo = extraerType(j)
+            
         game = Game.objects.get_or_create(title = titulo,
                 description=desc,
-                type="PS",
+                type=tipo,
                 rating=rate,
                 cost=oldCost,
                 on_sale_cost=costNow,
@@ -260,21 +272,39 @@ def almacenarPSN(pag):
                 start_date_on_sale=startDateOnSale,
                 end_date_on_sale=endDateOnSale,
                 release_date=releaseDate
-                )[0]
+                )[0]        
         game.save()
-        
+        genres = []       
         for gen in generos:
-                g = Genre.objects.get_or_create(name=gen)[0]
-                g.save()
-                game.genres.add(g)
+            g = Genre.objects.get_or_create(name=gen)[0]
+            g.save()
+            genres.append(g)
+            
+        game.genres.set(genres) 
+          
 
 def cargaOfertas():
-    soupOffers = cargar_web_selenium("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
-    array = soupOffers.find_all("div", class_="grid-cell-row__container")
+    soupOffers = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
+    array = soupOffers.find_all("div", class_="grid-cell__body")
+    dicc = dict()
+    count = 0
     for i in array:
+        s = count
         href = extraerHref(i)
-        offer =str(extraerOfferCat(i))
-        offerCat = OfferCategory.objects.get_or_create(name=offer)
-        print(href)
-        print(offerCat)
-        soupGamesOfferted = cargar_web("https://store.playstation.com"+href)
+        m = "https://store.playstation.com"+href+"/"
+        for p in range(1, 11):
+            dicc[s] = m+str(p)+"?emcid=pa-st-165916"
+            s = s+1
+    for value in dicc.values():
+        page = cargar_web_selenium(value)
+        offer = page.find("h3", class_="grid-header__title").string
+        gamesContained = page.find_all("div", class_="grid-cell grid-cell--game")
+        for g in gamesContained:
+            tipo = g.find("div","grid-cell__left-detail grid-cell__left-detail--detail-1").string
+            nombre = g.find("div", class_="grid-cell__title").span.string
+            tamanio = len(Game.objects.filter(title=nombre, type=tipo))
+            if tamanio !=0:
+                game = Game.objects.filter(title=nombre, type=tipo)[0]
+                offerCat = OfferCategory.objects.get_or_create(name=offer)[0]
+                offerCat.save()
+                game.offer_categories.add(offerCat)

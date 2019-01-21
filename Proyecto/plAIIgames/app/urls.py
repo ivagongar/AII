@@ -15,4 +15,6 @@ urlpatterns = [
     path('addGame', views.addGame, name='addGame'),
     path('removeGame', views.removeGame, name='removeGame'),
     path('populatePSN', views.populatePSN, name="populatePSN"),
+    path('showOfferedGames', views.mostrar_ofertados, name="offeredGames"),
+    path('cleanBBDD', views.tiraBBDD, name="cleanBBDD"),
 ]

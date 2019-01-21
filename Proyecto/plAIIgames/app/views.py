@@ -39,25 +39,32 @@ def logIn(request):
     else:
         return render(request, 'app/index.html')
 
-
+def tiraBBDD(request):
+    Game.objects.all().delete()
+    Genre.objects.all().delete()
+    
+    return render(request, 'app/index.html')
+    
 def populateSwitch(request):
     funciones.almacenarSwitch(3)
 
     return render(request, 'app/index.html')
 
 def populatePSN(request):
+    
     funciones.almacenarPSN(3)
+    funciones.cargaOfertas()
     
     return render(request, 'app/index.html')
 
 def mostrarJuegos(request):
     juegos = Game.objects.all()
 
-    return render(request, 'app/listAll.html', {"games": juegos})
+    return render(request, 'app/listGames.html', {"games": juegos})
 
-def mostrar_PSgames(request):
-    juegos = Game.objects.all().filter(type="PS")
-    return render(request, 'app/PSgames.html')
+def mostrar_ofertados(request):
+    juegos = Game.objects.filter(offer_categories__name__isnull=False)
+    return render(request, 'app/listGames.html', {"games": juegos})
 
 def signUp(request):
     if request.method == 'POST':

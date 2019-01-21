@@ -31,7 +31,7 @@ class Game(models.Model):
         - type: Indica la plataforma PS4,PS vita, PS3, Nintendo...
         - plus_cost: Si por estar suscrito a su plataforma como en el caso de la ps plus la rebaja es mayor
     """
-    title = models.TextField(unique=True)
+    title = models.TextField()
     description = models.TextField()
     type = models.TextField()
     rating = models.IntegerField(blank=True, null=True)
@@ -45,6 +45,9 @@ class Game(models.Model):
     genres = models.ManyToManyField(Genre, related_name='games')
     offer_categories = models.ManyToManyField(OfferCategory, related_name='games')
 
+    class Meta: 
+        unique_together = (('title'),('type'))
+        
     def __str__(self):
         return self.title
 
