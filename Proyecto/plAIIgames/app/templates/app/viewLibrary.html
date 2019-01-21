@@ -10,7 +10,7 @@
 <ul>
     {% for g in library.games.all %}
 
-     <li>{{g.title}}</li>
+     <li>{{g.title}} ({{g.type}})</li>
     {% endfor %}
 </ul>
 </fieldset>

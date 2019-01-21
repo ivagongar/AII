@@ -109,7 +109,7 @@ def addGame(request):
         num = request.POST['libreria']
         libreria = Library.objects.get(id=int(num))
 
-        for g in request.POST['games']:
+        for g in request.POST.getlist('games'):
             game = Game.objects.get(id=g)
             libreria.games.add(game)
         libreria.save()
@@ -134,7 +134,7 @@ def removeGame(request):
         num = request.POST['libreria']
         libreria = Library.objects.get(id=int(num))
 
-        for g in request.POST['games']:
+        for g in request.POST.getlist('games'):
             game = Game.objects.get(id=g)
             libreria.games.remove(game)
         libreria.save()
