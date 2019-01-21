@@ -52,7 +52,7 @@ def populateSwitch(request):
 
 def populatePSN(request):
     
-    funciones.almacenarPSN(3)
+    #funciones.almacenarPSN(3)
     funciones.cargaOfertas()
     
     return render(request, 'app/index.html')

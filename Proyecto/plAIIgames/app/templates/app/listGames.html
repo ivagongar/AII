@@ -8,15 +8,24 @@
 {% for juego in games %}
 	<fieldset>
   	<span>{{juego.title}} para {{juego.type}}</span>
-  	{% if juego.cost %}
-  		<span>a {{juego.cost}} euros </span>
+  	{% if juego.on_sale_cost %}
+  		<span>a {{juego.on_sale_cost}} euros </span>
+  	{% endif %}
+  	{% if not juego.on_sale_cost%}
+  		(Proximamente)
   	{% endif %}
   	<ul>Generos:
-  		{% for g in juego.genre %}
+  		{% for g in juego.genres.all %}
   			<li>{{g}}</li>
   		{% endfor %}
   	</ul>
-	
+  	{% if juego.offer_categories.all|length > 0 %}
+  	<ul>Categorias de oferta:
+  		{% for o in juego.offer_categories.all %}
+  			<li>{{o}}</li>
+  		{% endfor %}
+  	</ul>
+	{% endif%}
   	</fieldset>
   	<br>	
 {% endfor %}

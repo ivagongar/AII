@@ -140,21 +140,20 @@ def almacenarSwitch(numPages = 3):
             
              
             #game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
-            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
+            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[1], 'on_sale_cost': precios[0],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
             game.save()
-            genres = []
+            
             for gen in generos:
                 g = Genre.objects.get_or_create(name=gen)[0]
                 g.save()
                 game.genres.add(g)
                  
-            game.genres.add(genres)
-
-            
-    
-                    
+      
 def extraerHref(soup):
     return soup.a['href']
+
+def extraerHrefOfertas(soup):
+    return soup.a['href'].replace("?emcid=pa-st-165916","")
 
 def extraerOfferCat(soup):
     return soup.a.span.string
@@ -273,28 +272,29 @@ def almacenarPSN(pag):
                 end_date_on_sale=endDateOnSale,
                 release_date=releaseDate
                 )[0]        
-        game.save()
-        genres = []       
+        game.save()      
         for gen in generos:
             g = Genre.objects.get_or_create(name=gen)[0]
             g.save()
-            genres.append(g)
-            
-        game.genres.set(genres) 
+            game.genres.add(g)
           
 
 def cargaOfertas():
-    soupOffers = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
+    soupOffers = cargar_web_selenium("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
     array = soupOffers.find_all("div", class_="grid-cell__body")
+    print(array)
     dicc = dict()
     count = 0
     for i in array:
         s = count
-        href = extraerHref(i)
+        href = extraerHrefOfertas(i)
         m = "https://store.playstation.com"+href+"/"
         for p in range(1, 11):
             dicc[s] = m+str(p)+"?emcid=pa-st-165916"
             s = s+1
+        count = count+100
+            
+    print(dicc)
     for value in dicc.values():
         page = cargar_web_selenium(value)
         offer = page.find("h3", class_="grid-header__title").string
