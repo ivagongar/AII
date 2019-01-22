@@ -2,30 +2,34 @@
 
 {% block content %}
 <body>
-<div>
+<div style="float:left">
     <br>
     <br>
     
 <form action="/cleanBBDD">
-    <input type="submit" value="Clean BBDD"/>
+    <input type="submit" value="Borrar base de datos"/>
 </form>
-
+<div></div>
 <form action="/populateSwitch">
-    <input type="submit" value="Populate Switch"/>
+    <input type="submit" value="Añadir juegos de Nintendo Switch"/>
 </form>
 
 <form action="/populatePSN">
-    <input type="submit" value="Populate PSN"/>
+    <input type="submit" value="Añadir juegos de Playstation Store"/>
 </form>
 
 <form action="/listAll">
-    <input type="submit" value="All games"/>
+    <input type="submit" value="Todos los juegos"/>
 </form>
 
 <form action="/showOfferedGames">
-    <input type="submit" value="Show offered games"/>
+    <input type="submit" value="Mostrar los juegos ofertados"/>
 </form>
-    </div>
+<form action="/populateSysRec">
+	<input type="submit" value="Cargar sistema de recomendación"/>
+</form>
+
+</div>
 
 </body>
 {% endblock %}

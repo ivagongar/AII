@@ -41,7 +41,8 @@ class Game(models.Model):
     start_date_on_sale = models.DateTimeField(null=True)
     end_date_on_sale = models.DateTimeField(null=True)
     release_date = models.DateTimeField(null=True)
-
+    photo = models.TextField(null=True)
+    
     genres = models.ManyToManyField(Genre, related_name='games')
     offer_categories = models.ManyToManyField(OfferCategory, related_name='games')
 

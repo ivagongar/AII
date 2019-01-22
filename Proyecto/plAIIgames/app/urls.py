@@ -17,4 +17,7 @@ urlpatterns = [
     path('populatePSN', views.populatePSN, name="populatePSN"),
     path('showOfferedGames', views.mostrar_ofertados, name="offeredGames"),
     path('cleanBBDD', views.tiraBBDD, name="cleanBBDD"),
+    path('populateSysRec', views.loadRecommendationMatrix, name="populateSysRec"),
+    path('recommendations', views.recommendation, name = "recommendations"),
+    path('viewGame', views.viewGame, name="viewGame"),
 ]

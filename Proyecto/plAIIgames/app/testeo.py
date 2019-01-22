@@ -224,13 +224,17 @@ def extraerGenre(soup):
         for gen in genres:
             result.append(gen.string)
     return result
+
+def extraerPhoto(soup):
+    return soup.find("div", class_="product-image__img product-image__img--main").img['src']
     
     
 def almacenarPSN(pag):
-    dicc = dict()
+    dicc = {}
+    dicc2 = {}
     count = 0
     for p in range(1,pag):       
-        soup = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-FULLGAMES/"+str(p)+"?gameContentType=games")    
+        soup = cargar_web_selenium("https://store.playstation.com/es-es/grid/STORE-MSF75508-FULLGAMES/"+str(p)+"?gameContentType=games")    
         array = soup.find_all("div", class_="grid-cell grid-cell--game")
         for i in array:
             href = extraerHref(i)
@@ -238,82 +242,88 @@ def almacenarPSN(pag):
             s = count
             dicc[s] = "https://store.playstation.com"+href
             print(dicc[s])
-            count=count+1      
-    for value in dicc.values():
-        print("PROCEDE A ENTRAR EN EL JUEGO")
-        game = cargar_web_selenium(value)
-        array2 = game.find_all("div", class_="large-9 columns pdp__right-content")
-        for i in array2: 
-            titulo = extraerTitle(i)
-            print(titulo)
-            desc = extraerDescription(i)
-            print(desc)
-            startDateOnSale = extraerStartDateOnSale(i)
-            print(startDateOnSale)
-            endDateOnSale =extraerEndDateOnSale(i)
-            print(endDateOnSale)
-            releaseDate = extraerReleaseDate(i)
-            print(releaseDate)
-            rate = extraerRating(i)
-            print(rate)
-        array3 = game.find_all("div", class_="large-3 columns pdp__left-content")
-        for j in array3:
-            costNow = extraerCost(j)
-            print(costNow)
-            oldCost = extraerOldSaleCost(j)
-            print(oldCost)
-            costPlus = extraerPlusCost(j)
-            print(costPlus)
-            generos = extraerGenre(j) 
-            print(generos) 
-            tipo = extraerType(j) 
-            print(tipo)
-                     
-        """ 
-        game = Game.objects.get_or_create(title = titulo,
-                description=desc,
-                type="PS",
-                rating=rate,
-                cost=oldCost,
-                on_sale_cost=costNow,
-                plus_cost=costPlus, 
-                start_date_on_sale=startDateOnSale,
-                end_date_on_sale=endDateOnSale,
-                release_date=releaseDate
-                )[0]
-        game.save()
-        """
-        for gen in generos:
-            print(gen)
-            """
-            g = Genre.objects.get_or_create(name=gen)[0]
-                g.save()
-                
-                game.genres.add(g)
-            """
-def cargaOfertas():
-    soupOffers = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
-    array = soupOffers.find_all("div", class_="grid-cell__body")
-    dicc = dict()
-    count = 0
-    for i in array:
-        s = count
-        href = extraerHref(i)
-        m = "https://store.playstation.com"+href+"/"
-        offer =str(extraerOfferCat(i))
-        for p in range(1, 11):
-            dicc[s] = m+str(p)+"?emcid=pa-st-165916"
-            print(dicc[s])
-            s = s+1
-    for value in dicc.values():
-        print("PROCEDE A ENTRAR LA PAGINA DE OFERTAS")
-        page = cargar_web_selenium(value)
-        offer = page.find("h3", class_="grid-header__title").string
-        #offerCat = OfferCategory.objects.get_or_create(name=offer)[1]
-        gamesContained = page.find_all("div", class_="grid-cell grid-cell--game")
-        for g in gamesContained:
-            tipo = g.find("div","grid-cell__left-detail grid-cell__left-detail--detail-1").string
-            print(tipo)
-            nombre = g.find("div", class_="grid-cell__title").span.string
-            print(nombre)
-cargaOfertas()
+            dicc2["https://store.playstation.com"+href] = extraerPhoto(i)
+            print(dicc2["https://store.playstation.com"+href])
+            count=count+1     
+almacenarPSN(3)             
+#     
+#     for value in dicc.values():
+#          
+#         print("PROCEDE A ENTRAR EN EL JUEGO")
+#         game = cargar_web_selenium(value)
+#         array2 = game.find_all("div", class_="large-9 columns pdp__right-content")
+#         for i in array2: 
+#             titulo = extraerTitle(i)
+#             print(titulo)
+#             desc = extraerDescription(i)
+#             print(desc)
+#             startDateOnSale = extraerStartDateOnSale(i)
+#             print(startDateOnSale)
+#             endDateOnSale =extraerEndDateOnSale(i)
+#             print(endDateOnSale)
+#             releaseDate = extraerReleaseDate(i)
+#             print(releaseDate)
+#             rate = extraerRating(i)
+#             print(rate)
+#         array3 = game.find_all("div", class_="large-3 columns pdp__left-content")
+#         for j in array3:
+#             costNow = extraerCost(j)
+#             print(costNow)
+#             oldCost = extraerOldSaleCost(j)
+#             print(oldCost)
+#             costPlus = extraerPlusCost(j)
+#             print(costPlus)
+#             generos = extraerGenre(j) 
+#             print(generos) 
+#             tipo = extraerType(j) 
+#             print(tipo)
+#                       
+#         """ 
+#         game = Game.objects.get_or_create(title = titulo,
+#                 description=desc,
+#                 type="PS",
+#                 rating=rate,
+#                 cost=oldCost,
+#                 on_sale_cost=costNow,
+#                 plus_cost=costPlus, 
+#                 start_date_on_sale=startDateOnSale,
+#                 end_date_on_sale=endDateOnSale,
+#                 release_date=releaseDate
+#                 )[0]
+#         game.save()
+#         """
+#         for gen in generos:
+#             print(gen)
+#             """
+#             g = Genre.objects.get_or_create(name=gen)[0]
+#                 g.save()
+#                  
+#                 game.genres.add(g)
+#             """
+# def cargaOfertas():
+#     soupOffers = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-GAMESPECIALOFF/1?emcid=pa-st-165916")
+#     array = soupOffers.find_all("div", class_="grid-cell__body")
+#     dicc = {}
+#     dicc2 = {}
+#     count = 0
+#     for i in array:
+#         s = count
+#         href = extraerHref(i)
+#         m = "https://store.playstation.com"+href+"/"
+#         offer =str(extraerOfferCat(i))
+#         for p in range(1, 11):
+#             dicc[s] = m+str(p)+"?emcid=pa-st-165916"
+#             print(dicc[s])
+#              
+#             s = s+1
+#     for value in dicc.values():
+#         print("PROCEDE A ENTRAR LA PAGINA DE OFERTAS")
+#         page = cargar_web_selenium(value)
+#         offer = page.find("h3", class_="grid-header__title").string
+#         #offerCat = OfferCategory.objects.get_or_create(name=offer)[1]
+#         gamesContained = page.find_all("div", class_="grid-cell grid-cell--game")
+#         for g in gamesContained:
+#             tipo = g.find("div","grid-cell__left-detail grid-cell__left-detail--detail-1").string
+#             print(tipo)
+#             nombre = g.find("div", class_="grid-cell__title").span.string
+#             print(nombre)

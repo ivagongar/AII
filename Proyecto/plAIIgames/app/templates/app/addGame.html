@@ -7,11 +7,11 @@
     {% csrf_token %}
     <input type="hidden" value="{{libreria.id}}" id="liberia" name="libreria"/>
     <select multiple id="games" name="games">
-        {% for g in games %}
-        <option value="{{g.id}}">{{g.title}}</option>
+        {% for g in juegos %}
+        <option value="{{g.id}}">{{g.title}} ({{g.type}})</option>
         {% endfor %}
     </select>
-    <button type="submit">Submit</button>
+    <button type="submit">Añadir juegos</button>
 </form>
 
 </body>

@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from app.models import Genre, Game, Library
 from app.forms import LibraryForm
-from app import funciones
+from app import funciones, recomendacion
 from django.contrib.auth.models import User
 from django.template.context_processors import request
 
@@ -46,13 +46,13 @@ def tiraBBDD(request):
     return render(request, 'app/index.html')
     
 def populateSwitch(request):
-    funciones.almacenarSwitch(3)
+    funciones.almacenarSwitch(5)
 
     return render(request, 'app/index.html')
 
 def populatePSN(request):
     
-    #funciones.almacenarPSN(3)
+    funciones.almacenarPSN(5)
     funciones.cargaOfertas()
     
     return render(request, 'app/index.html')
@@ -63,7 +63,7 @@ def mostrarJuegos(request):
     return render(request, 'app/listGames.html', {"games": juegos})
 
 def mostrar_ofertados(request):
-    juegos = Game.objects.filter(offer_categories__name__isnull=False)
+    juegos = Game.objects.all().exclude(cost=0.0).exclude(cost__isnull=True)
     return render(request, 'app/listGames.html', {"games": juegos})
 
 def signUp(request):
@@ -103,28 +103,28 @@ def deleteLibrary(request):
 
     return redirect('listLibrary')
 
-
 def addGame(request):
     if request.method == 'POST':
         num = request.POST['libreria']
         libreria = Library.objects.get(id=int(num))
-
+        
         for g in request.POST.getlist('games'):
-            game = Game.objects.get(id=g)
+            game = Game.objects.get(id=int(g))
             libreria.games.add(game)
         libreria.save()
+
 
     else:
         libreria = Library.objects.get(id=request.GET['library'])
 
         juegos = Game.objects.all()
-        games = list()
+        games = []
         for j in juegos:
             games.append(j)
         for g in libreria.games.all():
             games.remove(g)
 
-        return render(request, 'app/addGame.html', {'libreria': libreria, 'games': games})
+        return render(request, 'app/addGame.html', {'libreria': libreria, 'juegos': games})
 
     return redirect('listLibrary')
 
@@ -133,9 +133,9 @@ def removeGame(request):
     if request.method == 'POST':
         num = request.POST['libreria']
         libreria = Library.objects.get(id=int(num))
-
+        
         for g in request.POST.getlist('games'):
-            game = Game.objects.get(id=g)
+            game = Game.objects.get(id=int(g))
             libreria.games.remove(game)
         libreria.save()
 
@@ -144,10 +144,33 @@ def removeGame(request):
 
         games = libreria.games.all()
 
-        return render(request, 'app/removeGame.html', {'libreria': libreria, 'games': games})
+        return render(request, 'app/removeGame.html', {'libreria': libreria, 'juegos': games})
 
     return redirect('listLibrary')
 
+def loadRecommendationMatrix(request):
+    recomendacion.loadDict()
+    return render(request, 'app/index.html')
+
+def recommendation(request):
+    userFavs = recomendacion.userFavs(request)
+    matrizItems = recomendacion.getMatriz()
+     
+    recommendation = recomendacion.getRecommendation(userFavs, matrizItems)[0:5]
+    
+    juegosRec = []
+    
+    for (score, game) in recommendation:
+        juego = Game.objects.get(id=game)
+        juegosRec.append(juego)
+        
+    
+    
+    return render(request, 'app/listLibrary.html', {'juegosRec': juegosRec})
 
 def viewLibrary(request):
     return render(request, 'app/viewLibrary.html', {'library': Library.objects.get(id=request.GET['library'])})
+
+def viewGame(request):
+    return render(request, 'app/displayGame.html', {'game': Game.objects.get(id=request.GET['game'])})
+

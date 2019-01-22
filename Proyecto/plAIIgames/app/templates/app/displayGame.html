@@ -1,0 +1,50 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<body>
+<fieldset>
+<img src="{{game.photo}}" style="float:left" width="200" height="200">
+
+<h3>Título: {{game.title}} ({{game.type}})</h3>
+<h4>Descripción: {{game.description}}</h4>
+<br>
+{% if game.release_date %}
+<h4>Fecha de lanzamiento:  {{game.release_date}}</h4>
+<br>
+{% endif %}	
+{% if game.cost %}
+<h5>Precio pre-rebaja: {{game.cost}}€</h5>
+<br>
+{% endif %}
+<h4>PVP actual: {{game.on_sale_cost}}€ </h4>
+<br>
+{% if game.plus_cost %}
+<h4>Precio para usuarios con PS plus: {{game.plus_cost}}€</h4>
+<br>
+{% endif %}
+{% if game.start_date_on_sale %}
+<h4>Período de rebaja: {{game.start_date_on_sale}} hasta {{game.end_date_on_sale}}</h4>
+<br>
+{% endif %}
+</fieldset>
+<h4><ul>Géneros:
+{% for g in game.genres.all %}
+	<h4><li>{{g}}</li></h4>
+{% endfor %}
+<br>
+</ul></h4>
+{% if game.offer_categories.all|length > 0 %}
+<h4><ul>Categorías de oferta:
+{% for o in game.offer_categories.all %}
+<h4><li>{{o}}</li></h4>
+{% endfor %}
+</ul></h4>
+{% endif %}
+
+<form action="/listAll">
+    <input type="submit" value="Volver atrás" />
+</form>
+
+</body>
+
+{% endblock %}

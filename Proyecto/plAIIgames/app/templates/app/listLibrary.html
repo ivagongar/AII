@@ -4,14 +4,16 @@
 <body>
 
 {% if request.user.library.all %}
+
+<h2>Lista de librerías</h2>
 <ul>
     {% for lib in request.user.library.all  %}
 
 
     <li>Librería: {{lib.title}}</li>
     <li>Descripción: {{lib.description}}</li>
-    <a href="/viewLibrary?library={{lib.id}}" style=" float:left; margin-right:5px"><button>View Library</button></a>
-    <a href="/deleteLibrary?library={{lib.id}}" style=" color:red; margin-right:5px"><button style="color:red">Remove Library</button></a>
+    <a href="/viewLibrary?library={{lib.id}}" style=" float:left; margin-right:5px"><button>Vista detallada del librería</button></a>
+    <a href="/deleteLibrary?library={{lib.id}}" style=" color:red; margin-right:5px"><button style="color:red">Eliminar la librería</button></a>
 
     <br>
     <br>
@@ -22,5 +24,26 @@
 {% else %}
 No tienes librerías
 {% endif %}
+	{% if juegosRec|length > 0 %}
+	<h4>Quizás te gusten los siguientes juegos</h4>
+	{% for juego in juegosRec %}
+		<div style="float:left; margin-right:50px; margin-bottom:15px">
+		<img src="{{juego.photo}}" width="100" height="100"/> 
+		<h5>{{juego.title}}</h5>
+		<h5>{{juego.type}}</h5>
+		<a href="/viewGame?game={{juego.id}}">Ver detalles</a>
+		</div>
+	{% endfor %}
+	{% endif %}
+<br>
+<br>
+<form action="/recommendations">
+    <input type="submit" value="Muéstrame algunas recomendaciones" />
+</form>
+
+<form action="/">
+    <input type="submit" value="Volver a la página principal" />
+</form>
+
 </body>
 {% endblock %}

@@ -108,7 +108,8 @@ def extraerLanzamiento(soup):
         res = datetime.datetime(int(year),int(month),int(day),0,0)
     
     return res
-
+def extraerFoto(soup):
+    return soup.img['src']
 
 
 #Contemplar numero de paginas variable
@@ -116,14 +117,11 @@ def almacenarSwitch(numPages = 3):
     #fbd.crearBD()
     
     for p in range(1,numPages+1):#Cambiar luego a 64
-        soup=cargarSwitch("https://www.nintendo.es/Buscar/Buscar-299117.html?f=147394-5-81&p="+str(p))
-        
-        
-        
+        soup=cargarSwitch("https://www.nintendo.es/Buscar/Buscar-299117.html?f=147394-5-81&p="+str(p))  
         pagina = soup.find_all("li", class_="searchresult_row page-list-group-item col-xs-12")
         
         for juego in pagina[2:len(pagina)]:
-            
+            foto = extraerFoto(juego)
             generos = extraerGeneros(juego)
             titulo = extraerTitulo(juego)
             desc = extraerDescripcion(juego)
@@ -140,7 +138,7 @@ def almacenarSwitch(numPages = 3):
             
              
             #game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[0], 'on_sale_cost': precios[1],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz, 'genres': generosBien, 'offer_categories': []})
-            game = Game.objects.get_or_create(title = titulo, defaults={'description': desc, 'type': 'Nintendo Switch', 'rating': None, 'cost': precios[1], 'on_sale_cost': precios[0],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
+            game = Game.objects.get_or_create(title = titulo, type="Nintendo Switch", defaults={'description': desc, 'photo' : foto, 'rating': None, 'cost': precios[1], 'on_sale_cost': precios[0],'plus_cost': None, 'start_date_on_sale': None, 'end_date_on_sale': finOferta, 'release_date': lanz})[0]
             game.save()
             
             for gen in generos:
@@ -151,6 +149,9 @@ def almacenarSwitch(numPages = 3):
       
 def extraerHref(soup):
     return soup.a['href']
+
+def extraerPhoto(soup):
+    return soup.find("div", class_="product-image__img product-image__img--main").img['src']
 
 def extraerHrefOfertas(soup):
     return soup.a['href'].replace("?emcid=pa-st-165916","")
@@ -230,20 +231,19 @@ def extraerGenre(soup):
     
       
 def almacenarPSN(pag):
-    dicc = dict()
+    dicc = {} 
+    dicc2 = {}
     count = 0
     for p in range(1,pag):       
         soup = cargar_web("https://store.playstation.com/es-es/grid/STORE-MSF75508-FULLGAMES/"+str(p)+"?gameContentType=games")    
         array = soup.find_all("div", class_="grid-cell grid-cell--game")
         for i in array:
             href = extraerHref(i)
-            print(href)
             s = count
             dicc[s] = "https://store.playstation.com"+href
-            print(dicc[s])
+            dicc2["https://store.playstation.com"+href] = extraerPhoto(i)
             count=count+1      
     for value in dicc.values():
-        print("PROCEDE A ENTRAR EN EL JUEGO")
         game = cargar_web_selenium(value)
         array2 = game.find_all("div", class_="large-9 columns pdp__right-content")
         for i in array2: 
@@ -253,6 +253,7 @@ def almacenarPSN(pag):
             endDateOnSale =extraerEndDateOnSale(i)
             releaseDate = extraerReleaseDate(i)
             rate = extraerRating(i)
+            foto = dicc2[value]
         array3 = game.find_all("div", class_="large-3 columns pdp__left-content")
         for j in array3:
             costNow = extraerCost(j)
@@ -270,7 +271,8 @@ def almacenarPSN(pag):
                 plus_cost=costPlus, 
                 start_date_on_sale=startDateOnSale,
                 end_date_on_sale=endDateOnSale,
-                release_date=releaseDate
+                release_date=releaseDate, 
+                photo = foto
                 )[0]        
         game.save()      
         for gen in generos:

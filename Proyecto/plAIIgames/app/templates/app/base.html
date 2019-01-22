@@ -16,38 +16,37 @@
 
 <header>
 
-	
-
      {% csrf_token %}
     {% if request.user.is_authenticated %}
     <div>
-    <h3 style="float:left; margin:0px; margin-right:5px"> Welcome to plAIIL GAMES {{request.user}}</h3>
-    <a href="/editLibrary" style=" float:left; margin-right:5px"><button>Create Library</button></a>
-    <a href="/listLibrary" style=" float:left; margin-right:5px"><button>List my Libraries</button></a>
+    <h3 style="float:left; margin:0px; margin-right:5px"> Bienvenid@ a plAIIL GAMES {{request.user}}</h3>
+    <a href="/editLibrary" style=" float:left; margin-right:5px"><button>Crear una librería</button></a>
+    <a href="/listLibrary" style=" float:left; margin-right:5px"><button>Mis librerías</button></a>
 
 
     <form action="/logOut">
-        <input type="submit" value="Log Out"/>
+        <input type="submit" value="Cerrar sesión"/>
     </form>
-        </div>
+    </div>
 
     {% else %}
     <form action="/logIn" method="POST" style="float:left">
         {% csrf_token %}
-        <label for="username">Username: </label><input type="text" id="username" name="username"/>
-        <label for="password">Password: </label><input type="password" id="password" name="password"/>
-        <input type="submit" value="Log In"/>
+        <label for="username">Nombre de usuario: </label><input type="text" id="username" name="username"/>
+        <label for="password">Contraseña: </label><input type="password" id="password" name="password"/>
+        <input type="submit" value="Iniciar sesión"/>
 
     </form>
-    <a href="/signUp" style="margin:15px"><button>Sign Up</button></a>
+    <a href="/signUp" style="float:left"><button>Crear usuario</button></a>
     {% if loginerror%}
     <b><p style="color:red">{{loginerror}}</p></b>
     {% endif %}
 
     {% endif %}
 
-
-
+	<form style="float:left" action="/">
+	    <input type="submit" value="Volver a la página principal" />
+		</form>
 </header>
 <br>
 <br>

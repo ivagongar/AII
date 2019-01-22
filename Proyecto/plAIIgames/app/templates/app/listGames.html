@@ -2,40 +2,35 @@
 
 {% block content %}
 <body>
-<h1>All games</h1>
-
+<h1>List of games</h1>
 <br>
 {% for juego in games %}
-	<fieldset>
-  	<span>{{juego.title}} para {{juego.type}}</span>
+	<img src="{{juego.photo}}" style="float:left" width="75" height="75">
+	<fieldset style="margin-left:105px; border: 1px solid lightgray;">
+  	<span style="font-weight: bold;">{{juego.title}}</span><span> para {{juego.type}}</span>
   	{% if juego.on_sale_cost %}
-  		<span>a {{juego.on_sale_cost}} euros </span>
+  		<span>a {{juego.on_sale_cost}}€</span>
   	{% endif %}
   	{% if not juego.on_sale_cost%}
-  		(Proximamente)
+  		(Próximamente)
   	{% endif %}
-  	<ul>Generos:
+  	<ul>Géneros:
   		{% for g in juego.genres.all %}
   			<li>{{g}}</li>
   		{% endfor %}
   	</ul>
   	{% if juego.offer_categories.all|length > 0 %}
-  	<ul>Categorias de oferta:
+  	<ul>Categorías de oferta:
   		{% for o in juego.offer_categories.all %}
   			<li>{{o}}</li>
   		{% endfor %}
   	</ul>
 	{% endif%}
+	
+	<a href="/viewGame?game={{juego.id}}">Ver detalles del juego</a>
   	</fieldset>
   	<br>	
 {% endfor %}
-
-
 <br>
-<form action="/">
-    <input type="submit" value="Index" />
-</form>
-
-
 </body>
 {% endblock %}

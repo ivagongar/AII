@@ -3,17 +3,17 @@
 {% block content %}
 <body>
 
-
+  <h3 style="color: blue">Creando una nueva librería</h3>
   <form method="post">
     {% csrf_token %}
 
     {{ form.management_form }}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Crear librería</button>
   </form>
 
-<form action="/">
-    <input type="submit" value="Index" />
+<form action="/listLibrary">
+    <input type="submit" value="Lista de librerías" />
 </form>
 
 </body>
